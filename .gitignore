@@ -1,0 +1,27 @@
+# Env files
+.env
+.env.backup
+.env.production
+
+# Logs
+src/logs/*
+!src/logs/.gitkeep
+
+# Storage
+src/storage/user/profile/*
+!src/storage/user/profile/.gitkeep
+
+src/storage/customer/profile/*
+!src/storage/customer/profile/.gitkeep
+
+src/storage/product/image/*
+!src/storage/product/image/.gitkeep
+
+src/storage/product/thumbnail/*
+!src/storage/product/thumbnail/.gitkeep
+
+src/storage/product/video/*
+!src/storage/product/video/.gitkeep
+
+src/storage/blog/image/*
+!src/storage/blog/image/.gitkeep
