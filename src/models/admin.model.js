@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const mongooseHidden = require("mongoose-hidden")();
 const bcrypt = require("bcryptjs");
 
 const adminSchema = new mongoose.Schema({
@@ -30,6 +31,15 @@ const adminSchema = new mongoose.Schema({
   },
 });
 
+// Hide password field
+// adminSchema.plugin(mongooseHidden, {hidden: { password: true, updatedAt: true },});  ## mongoose-hidden
+adminSchema.methods.toJSON = function () {
+  var obj = this.toObject();
+  delete obj.password;
+  delete obj.updatedAt;
+  return obj;
+};
+
 // Hash password before saving
 adminSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
@@ -38,5 +48,9 @@ adminSchema.pre("save", async function (next) {
   next();
 });
 
+// Compare password
+adminSchema.methods.comparePassword = async function (password) {
+  return await bcrypt.compare(password, this.password);
+};
 
 module.exports = mongoose.model("Admin", adminSchema);

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const mongooseHidden = require("mongoose-hidden")();
 const Schema = mongoose.Schema;
 
 

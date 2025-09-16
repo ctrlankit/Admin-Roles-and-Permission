@@ -7,7 +7,7 @@ const seedDefaultAdmin = async () => {
       name: "Admin",
       email: "devsoft7pm@gmail.com",
       phone: "1234567890",
-      password: bcrypt.hashSync("!@admin123", 10),
+    password: "!@admin123",
     };
 
     // Check if admin already exists

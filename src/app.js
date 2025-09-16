@@ -16,7 +16,7 @@ app.use(express.json());
 
 
 // Routes
-app.use('/api', route);
+app.use('/api/v1', route);
 
 //not found route
 app.use((req, res, next) => {
