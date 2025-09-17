@@ -40,18 +40,98 @@ class AdminAuthController extends controller {
   createAdmin = async (req, res) => {
     try {
       const { name, email, phone, password } = req.body;
-    
+
       const user = await admin.create({
         name: name,
         email: email,
         phone: phone,
         password: password,
       });
-      
+
       return this.successFullyCreatedResponse(
         res,
         "Admin created successfully"
       );
+    } catch (error) {
+      console.error(error);
+      return this.errorResponse(res, "Oops, something went wrong");
+    }
+  };
+
+  updateAdmin = async (req, res) => {
+    try {
+      const { name, email, phone, password } = req.body;
+      const data = {};
+      if (name) data.name = name;
+      if (email) data.email = email;
+      if (phone) data.phone = phone;
+
+      const user = await admin.findByIdAndUpdate(req.user.id._id, data, {
+        new: true,
+      });
+
+      return this.successFullyCreatedResponse(
+        res,
+        "Admin updated successfully"
+      );
+    } catch (error) {
+      console.error(error);
+      return this.errorResponse(res, "Oops, something went wrong");
+    }
+  };
+
+  logout = async (req, res) => {
+    try {
+      const user = await admin.findById(req.user.id._id);
+      if (user) {
+        const tokens = await authToken.updateMany(
+          { clientId: user._id, revoked: false },
+          { $set: { revoked: true } }
+        );
+        return this.successFullyCreatedResponse(res, "Logout successfully");
+      } else {
+        return this.errorResponse(res, "User not found");
+      }
+    } catch (error) {
+      console.error(error);
+      return this.errorResponse(res, "Oops, something went wrong");
+    }
+  };
+
+  getProfile = async (req, res) => {
+    try {
+      const user = await admin.findById(req.user.id._id);
+      if (user) {
+        return this.successResponse(res, user);
+      } else {
+        return this.errorResponse(res, "User not found");
+      }
+    } catch (error) {
+      console.error(error);
+      return this.errorResponse(res, "Oops, something went wrong");
+    }
+  };
+
+  deleteAdmin = async (req, res, next) => {
+    try {
+      const { id } = req.params;
+
+      const user = await admin.findByIdAndUpdate(
+        id,
+        { deletedAt: new Date() },
+        {
+          new: true,
+        }
+      );
+
+      if (user) {
+        return this.successFullyCreatedResponse(
+          res,
+          "Admin deleted successfully"
+        );
+      } else {
+        return this.errorResponse(res, "User not found");
+      }
     } catch (error) {
       console.error(error);
       return this.errorResponse(res, "Oops, something went wrong");

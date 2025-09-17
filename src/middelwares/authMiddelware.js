@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const authMiddelware = async (req, res, next) => {
   let token = req.headers.authorization;
 
-  if (!token) return res.status(401).json({ message: "Unauthorized" });
+  if (!token) return res.status(401).json({success: false, message: "Unauthorized" });
   try {
     if (
       req.headers.authorization &&
@@ -15,14 +15,14 @@ const authMiddelware = async (req, res, next) => {
         .where({ token: token })
         .where({ revoked: false })
         .findOne();
-      if (!checkToken) return res.status(401).json({ message: "Unauthorized" });
+      if (!checkToken) return res.status(401).json({success: false, message: "Unauthorized" });
       const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
       req.user = decoded;
       next();
     }
   } catch (error) {
     console.error(error);
-    return res.status(401).json({ message: "Unauthorized" });
+    return res.status(401).json({success: false, message: "Unauthorized" });
   }
 };
 

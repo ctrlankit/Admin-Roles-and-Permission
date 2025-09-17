@@ -1,4 +1,5 @@
 const { body } = require("express-validator");
+const { param } = require("express-validator");
 const role = require("../models/role.model");
 const admin = require("../models/admin.model");
 
@@ -66,6 +67,36 @@ exports.createAdmin = [
       const roleDoc = await role.findById(value);
       if (!roleDoc) {
         throw new Error("Role not found");
+      }
+      return true;
+    }),
+];
+
+exports.updateAdmin = [
+  body("name").optional().isString().withMessage("name is not valid"),
+  body("email").optional().isEmail().withMessage("email is not valid"),
+  body("phone").optional().isNumeric().withMessage("phone is not valid"),
+  body("role_id")
+    .optional()
+    .isMongoId()
+    .withMessage("role_id is not valid")
+    .custom(async (value) => {
+      const roleDoc = await role.findById(value);
+      if (!roleDoc) {
+        throw new Error("Role not found");
+      }
+      return true;
+    }),
+];
+
+exports.deleteAdmin = [
+  param("id")
+    .isMongoId()
+    .withMessage("adminId is not valid")
+    .custom(async (value) => {
+      const adminDoc = await admin.findById(value);
+      if (!adminDoc) {
+        throw new Error("Admin not found");
       }
       return true;
     }),

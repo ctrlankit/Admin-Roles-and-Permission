@@ -29,6 +29,7 @@ const adminSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  deletedAt: { type: Date, default: null },
 });
 
 // Hide password field
@@ -37,6 +38,7 @@ adminSchema.methods.toJSON = function () {
   var obj = this.toObject();
   delete obj.password;
   delete obj.updatedAt;
+  delete obj.deletedAt;
   return obj;
 };
 
