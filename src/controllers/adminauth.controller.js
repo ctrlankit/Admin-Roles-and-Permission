@@ -26,12 +26,32 @@ class AdminAuthController extends controller {
           revoked: false,
           createdAt: new Date(),
         });
-
         user._doc.token = token;
         return this.successResponse(res, { data: user });
       } else {
         return this.errorResponse(res, "Invalid credentials");
       }
+    } catch (error) {
+      console.error(error);
+      return this.errorResponse(res, "Oops, something went wrong");
+    }
+  };
+
+  createAdmin = async (req, res) => {
+    try {
+      const { name, email, phone, password } = req.body;
+    
+      const user = await admin.create({
+        name: name,
+        email: email,
+        phone: phone,
+        password: password,
+      });
+      
+      return this.successFullyCreatedResponse(
+        res,
+        "Admin created successfully"
+      );
     } catch (error) {
       console.error(error);
       return this.errorResponse(res, "Oops, something went wrong");
