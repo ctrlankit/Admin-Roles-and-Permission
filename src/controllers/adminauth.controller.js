@@ -20,12 +20,13 @@ class AdminAuthController extends controller {
         }
 
         //save token
-        const createToken = await authToken.create({
+         await authToken.create({
           token: token,
           clientId: user._id,
           revoked: false,
           createdAt: new Date(),
         });
+
         user._doc.token = token;
         return this.successResponse(res, { data: user });
       } else {
@@ -48,6 +49,8 @@ class AdminAuthController extends controller {
         password: password,
       });
 
+      if (!user) return this.errorResponse(res, "Admin not created");
+
       return this.successFullyCreatedResponse(
         res,
         "Admin created successfully"
@@ -60,7 +63,7 @@ class AdminAuthController extends controller {
 
   updateAdmin = async (req, res) => {
     try {
-      const { name, email, phone, password } = req.body;
+      const { name, email, phone } = req.body;
       const data = {};
       if (name) data.name = name;
       if (email) data.email = email;
@@ -69,6 +72,8 @@ class AdminAuthController extends controller {
       const user = await admin.findByIdAndUpdate(req.user.id._id, data, {
         new: true,
       });
+
+      if (!user) return this.errorResponse(res, "Admin not updated");
 
       return this.successFullyCreatedResponse(
         res,
@@ -88,7 +93,10 @@ class AdminAuthController extends controller {
           { clientId: user._id, revoked: false },
           { $set: { revoked: true } }
         );
-        return this.successFullyCreatedResponse(res, "Logout successfully");
+
+        if (tokens) {
+          return this.successFullyCreatedResponse(res, "Logout successfully");
+        }
       } else {
         return this.errorResponse(res, "User not found");
       }

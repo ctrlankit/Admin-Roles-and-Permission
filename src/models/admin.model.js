@@ -11,6 +11,7 @@ const adminSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
+    index: true
   },
   phone: {
     type: Number,
@@ -35,7 +36,7 @@ const adminSchema = new mongoose.Schema({
 // Hide password field
 // adminSchema.plugin(mongooseHidden, {hidden: { password: true, updatedAt: true },});  ## mongoose-hidden
 adminSchema.methods.toJSON = function () {
-  var obj = this.toObject();
+  const obj = this.toObject();
   delete obj.password;
   delete obj.updatedAt;
   delete obj.deletedAt;

@@ -13,6 +13,10 @@ const roleSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  deleted_at: {
+    type: Date,
+    default: null,
+  },
 });
 
 module.exports = mongoose.model("Role", roleSchema);
