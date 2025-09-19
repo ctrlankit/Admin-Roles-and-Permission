@@ -1,10 +1,16 @@
 class Controller {
-  successResponse(res, data) {
-    return res.status(200).json({
+  successResponse(res, data, meta = null) {
+    let response = {
       success: true,
       message: "Success",
       data: data,
-    });
+    };
+
+    if (meta) {
+      response.meta = meta;
+    }
+
+    return res.status(200).json(response);
   }
 
   successFullyCreatedResponse(res, message) {

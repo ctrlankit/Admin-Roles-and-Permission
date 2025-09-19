@@ -6,7 +6,6 @@ const validate = require("../middelwares/validationMiddelware");
 const adminValidation = require("../requests/adminValidations");
 const roleValidation = require("../requests/roleValidations");
 const RoleController = require("../controllers/role.controller");
-const PermissionController = require("../controllers/permission.controller");
 const checkPermission = require("../middelwares/permissionMiddelware");
 
 router.post("/login",adminValidation.loginValidation,validate,AdminAuthController.login);
@@ -22,10 +21,12 @@ router.post('/logout',AdminAuthController.logout);
 router.get('/getprofile',checkPermission('View Admin'),AdminAuthController.getProfile);
 
 
-// AdminAuthController role routes
+// role routes
 router.post('/role/create',checkPermission('Create Role'),roleValidation.createRole,validate,RoleController.createRole);
 router.put('/role/update/:id',checkPermission('Update Role'),roleValidation.updateRole,validate,RoleController.updateRole);
 router.delete('/role/delete/:id',checkPermission('Delete Role'),roleValidation.deleteRole,validate,RoleController.deleteRole);
-router.get('/role/permissions',checkPermission('View Role'),roleValidation.roleHasPermissions,validate,RoleController.RoleHasPermissions);
+router.get('/role/permissions/:id',checkPermission('View Role'),roleValidation.roleHasPermissions,validate,RoleController.RoleHasPermissions);
+
+
 
 module.exports = router;

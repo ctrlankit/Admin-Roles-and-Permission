@@ -2,6 +2,7 @@ const Role = require("../models/role.model");
 const Permission = require("../models/permission.model");
 const RoleHasPermission = require("../models/roleHasPermission.model");
 const Controller = require("./controller");
+const commonservice = require("../services/commonservice.js");
 
 class RoleController extends Controller {
   createRole = async (req, res, next) => {
@@ -85,13 +86,52 @@ class RoleController extends Controller {
     }
   };
 
-  RoleHasPermissions = async(req, res, next) => {
-     try {
+  RoleHasPermissions = async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const { search_key, per_page,page = 1,paginate } = req.body;
       
-     } catch (error) {
-       console.error(error);
-       return this.errorResponse(res, "!Ops, Something went wrong");
-     }
+      const role = await Role.findById(id);
+
+      if (!role) {
+        return this.errorResponse(res, "Role not found");
+      }
+
+      const roleHasPermissions = await RoleHasPermission.find({
+        roleId: id,
+      }).select("permissionId");
+
+      if (!roleHasPermissions) {
+        return this.errorResponse(res, "Role has no permissions");
+      }
+
+      const permissionIds = roleHasPermissions.map((rp) => rp.permissionId);
+
+      let query = Permission.find({
+        _id: { $in: permissionIds },
+      });
+
+      //search filter
+      if (
+        typeof search_key !== "undefined" &&
+        search_key !== null &&
+        search_key.trim() !== ""
+      ) {
+        query = query.where({ name: { $regex: search_key, $options: "i" } });
+      }
+
+      if (paginate === "true") 
+      {
+        const paginatedResult = await commonservice.paginate(Permission,query,page,per_page)
+        return this.successResponse(res, paginatedResult.data, paginatedResult.meta);
+      } else {
+        const results = await query.exec();
+        return this.successResponse(res, results);
+      }
+    } catch (error) {
+      console.error(error);
+      return this.errorResponse(res, "!Ops, Something went wrong");
+    }
   };
 }
 

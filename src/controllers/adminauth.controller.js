@@ -28,7 +28,7 @@ class AdminAuthController extends controller {
         });
 
         user._doc.token = token;
-        return this.successResponse(res, { data: user });
+        return this.successResponse(res,user);
       } else {
         return this.errorResponse(res, "Invalid credentials");
       }

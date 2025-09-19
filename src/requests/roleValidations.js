@@ -104,7 +104,8 @@ exports.roleHasPermissions = [
     .optional()
     .isString()
     .withMessage("search_key is not valid"),
-  body("per_page").optional().isNumeric().withMessage("per_page is not valid"),
+  body("per_page").optional().isNumeric().withMessage("per_page must be a number"),
+  body("page").optional().isNumeric().withMessage("page must be a number"),
   body("paginate")
     .optional()
     .custom((value) => {
